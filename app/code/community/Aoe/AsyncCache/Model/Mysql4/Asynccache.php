@@ -24,6 +24,9 @@ class Aoe_AsyncCache_Model_Mysql4_Asynccache extends Mage_Core_Model_Mysql4_Abst
      */
     public function save(Mage_Core_Model_Abstract $object)
     {
+        // define on-duplicate-key-update fields
+        $this->_fieldsForUpdate = array('tstamp');
+
         if ($object->isDeleted()) {
             return $this->delete($object);
         }
