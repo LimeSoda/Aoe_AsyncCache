@@ -102,6 +102,7 @@ class Aoe_AsyncCache_Model_Cleaner extends Mage_Core_Model_Abstract {
 		$collection = Mage::getModel('aoeasynccache/asynccache')->getCollection(); /* @var $collection Aoe_AsyncCache_Model_Mysql4_Asynccache_Collection */
 		$collection->addFieldToFilter('tstamp', array('lteq' => time()));
 		$collection->addFieldToFilter('status', Aoe_AsyncCache_Model_Asynccache::STATUS_PENDING);
+        $collection->addOrder('tstamp', Varien_Data_Collection::SORT_ORDER_ASC);
 
         // if configured, set limit to query
         $selectLimit = (int) Mage::getStoreConfig('system/aoeasynccache/select_limit');
