@@ -5,31 +5,30 @@
  * 
  * @author Fabrizio Branca
  *
- * @method getId()
- * @method setId()
- * @method getTstamp()
- * @method setTstamp()
- * @method getMode()
- * @method setMode()
- * @method getTags()
- *
- * @method setTags()
- * @method getTrace()
- * @method setTrace()
- * @method getStatus()
- * @method setStatus()
- * @method getProcessed()
- * @method setProcessed()
+ * @method int getId()
+ * @method Aoe_AsyncCache_Model_Asynccache setId(int $id)
+ * @method int getTstamp()
+ * @method Aoe_AsyncCache_Model_Asynccache setTstamp(int $timeStamp)
+ * @method string getMode()
+ * @method Aoe_AsyncCache_Model_Asynccache setMode(string $mode)
+ * @method string getTags()
+ * @method Aoe_AsyncCache_Model_Asynccache setTags(string $tags)
+ * @method string getTrace()
+ * @method Aoe_AsyncCache_Model_Asynccache setTrace(string $trace)
+ * @method string getStatus()
+ * @method Aoe_AsyncCache_Model_Asynccache setStatus(string $status)
+ * @method string getProcessed()
+ * @method Aoe_AsyncCache_Model_Asynccache setProcessed(string $message)
  */
-class Aoe_AsyncCache_Model_Asynccache extends Mage_Core_Model_Abstract {
+class Aoe_AsyncCache_Model_Asynccache extends Mage_Core_Model_Abstract
+{
+    const STATUS_PENDING = 'pending';
 
-	const STATUS_PENDING = 'pending';
-
-	/**
-	 * Constructor
-	 */
-	protected function _construct() {
-		$this->_init('aoeasynccache/asynccache');
-	}
-	
+    /**
+     * Constructor
+     */
+    protected function _construct()
+    {
+        $this->_init('aoeasynccache/asynccache');
+    }
 }

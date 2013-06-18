@@ -5,22 +5,22 @@
  * 
  * @author Fabrizio Branca
  */
-class Aoe_AsyncCache_Model_Mysql4_Asynccache extends Mage_Core_Model_Mysql4_Abstract {
-	
-	/**
-	 * Constructor
-	 * 
-	 * @return void
-	 */
-	protected function _construct()	{
-		$this->_init('aoeasynccache/asynccache', 'id');
-	}
+class Aoe_AsyncCache_Model_Resource_Asynccache extends Mage_Core_Model_Mysql4_Abstract {
+    /**
+     * Constructor
+     *
+     * @return void
+     */
+    protected function _construct()
+    {
+        $this->_init('aoeasynccache/asynccache', 'id');
+    }
 
     /**
      * Overwritten save method, updates data on duplicate key
      *
      * @param Mage_Core_Model_Abstract $object
-     * @return Aoe_AsyncCache_Model_Mysql4_Asynccache
+     * @return Aoe_AsyncCache_Model_Resource_Asynccache
      */
     public function save(Mage_Core_Model_Abstract $object)
     {
@@ -45,5 +45,4 @@ class Aoe_AsyncCache_Model_Mysql4_Asynccache extends Mage_Core_Model_Mysql4_Abst
 
         return $this;
     }
-
 }

@@ -1,113 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
 
-	<modules>
-		<Aoe_AsyncCache>
-			<active>true</active>
-			<codePool>community</codePool>
-			<version>1.0.0</version>
-		</Aoe_AsyncCache>
-	</modules>
+    <modules>
+        <Aoe_AsyncCache>
+            <active>true</active>
+            <codePool>community</codePool>
+            <version>1.0.0</version>
+        </Aoe_AsyncCache>
+    </modules>
 
-	<frontend>
-		<routers>
-			<Aoe_AsyncCache><!-- wird verwendet für das Modul im Layout XML Handle -->
-				<use>standard</use><!-- "standard" für frontend controller, "admin" für admin controller -->
-				<args>
-					<module>Aoe_AsyncCache</module>
-					<frontName>aoeasynccache</frontName>
-				</args>
-			</Aoe_AsyncCache>
-		</routers>
-	</frontend>
+    <frontend>
+        <routers>
+            <Aoe_AsyncCache>
+                <use>standard</use>
+                <args>
+                    <module>Aoe_AsyncCache</module>
+                    <frontName>aoeasynccache</frontName>
+                </args>
+            </Aoe_AsyncCache>
+        </routers>
+    </frontend>
 
-	<global>
+    <global>
+        <models>
+            <aoeasynccache>
+                <class>Aoe_AsyncCache_Model</class>
+                <resourceModel>aoeasynccache_resource</resourceModel>
+            </aoeasynccache>
+            <aoeasynccache_resource>
+                <class>Aoe_AsyncCache_Model_Resource</class>
+                <entities>
+                    <asynccache><table>asynccache</table></asynccache>
+                </entities>
+            </aoeasynccache_resource>
+        </models>
 
-		<models>
-			<aoeasynccache>
-				<class>Aoe_AsyncCache_Model</class>
-				<resourceModel>aoeasynccache_mysql4</resourceModel>
-			</aoeasynccache>
-			<aoeasynccache_mysql4>
-				<class>Aoe_AsyncCache_Model_Mysql4</class>
-				<entities>
-					<asynccache><table>asynccache</table></asynccache>
-				</entities>
-			</aoeasynccache_mysql4>
-		</models>
+        <helpers>
+            <aoeasynccache>
+                <class>Aoe_AsyncCache_Helper</class>
+            </aoeasynccache>
+        </helpers>
 
-		<helpers>
-			<aoeasynccache>
-				<class>Aoe_AsyncCache_Helper</class>
-			</aoeasynccache>
-		</helpers>
+        <blocks>
+            <aoeasynccache>
+                <class>Aoe_AsyncCache_Block</class>
+            </aoeasynccache>
+        </blocks>
 
-		<blocks>
-			<aoeasynccache>
-				<class>Aoe_AsyncCache_Block</class>
-			</aoeasynccache>
-		</blocks>
+        <resources>
+            <aoeasynccache_setup>
+                <setup><module>Aoe_AsyncCache</module></setup>
+                <connection><use>core_setup</use></connection>
+            </aoeasynccache_setup>
+        </resources>
 
-		<resources>
-			<aoeasynccache_setup>
-				<setup><module>Aoe_AsyncCache</module></setup>
-				<connection><use>core_setup</use></connection>
-			</aoeasynccache_setup>
-		</resources>
+        <events>
+            <aoe_tools_clearcache_cli>
+                <observers>
+                    <aoeasynccache>
+                        <type>singleton</type>
+                        <class>aoeasynccache/cleaner</class>
+                        <method>processQueue</method>
+                    </aoeasynccache>
+                </observers>
+            </aoe_tools_clearcache_cli>
+        </events>
+    </global>
 
-		<events>
-			<aoe_tools_clearcache_cli>
-				<observers>
-					<aoeasynccache>
-						<type>singleton</type>
-						<class>aoeasynccache/cleaner</class>
-						<method>processQueue</method>
-					</aoeasynccache>
-				</observers>
-			</aoe_tools_clearcache_cli>
-		</events>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Aoe_AsyncCache before="Mage_Adminhtml">Aoe_AsyncCache_Adminhtml</Aoe_AsyncCache>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
 
-	</global>
+    <adminhtml>
+        <layout>
+            <updates>
+                <aoeasynccache>
+                    <file>aoeasynccache/aoeasynccache.xml</file>
+                </aoeasynccache>
+            </updates>
+        </layout>
+    </adminhtml>
 
-	<admin>
-		<routers>
-			<adminhtml>
-				<args>
-					<modules>
-						<Aoe_AsyncCache before="Mage_Adminhtml">Aoe_AsyncCache_Adminhtml</Aoe_AsyncCache>
-					</modules>
-				</args>
-			</adminhtml>
-		</routers>
-	</admin>
-
-	<adminhtml>
-		<layout>
-			<updates>
-				<aoeasynccache>
-					<file>aoeasynccache/aoeasynccache.xml</file>
-				</aoeasynccache>
-			</updates>
-		</layout>
-	</adminhtml>
-
-	<crontab>
-		<jobs>
-			<aoeasynccache>
-				<schedule><config_path>system/aoeasynccache/scheduler_cron_expr</config_path></schedule>
-				<run><model>aoeasynccache/cleaner::processQueue</model></run>
-			</aoeasynccache>
-		</jobs>
-	</crontab>
+    <crontab>
+        <jobs>
+            <aoeasynccache>
+                <schedule><config_path>system/aoeasynccache/scheduler_cron_expr</config_path></schedule>
+                <run><model>aoeasynccache/cleaner::processQueue</model></run>
+            </aoeasynccache>
+        </jobs>
+    </crontab>
 
     <default>
-		<system>
-			<aoeasynccache>
-				<enabletrace>0</enabletrace>
-				<scheduler_cron_expr>*/15 * * * *</scheduler_cron_expr>
+        <system>
+            <aoeasynccache>
+                <scheduler_cron_expr>*/15 * * * *</scheduler_cron_expr>
                 <select_limit>0</select_limit>
-			</aoeasynccache>
-		</system>
-	</default>
-
+            </aoeasynccache>
+        </system>
+    </default>
 </config>

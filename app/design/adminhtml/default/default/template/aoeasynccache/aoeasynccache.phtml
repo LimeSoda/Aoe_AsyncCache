@@ -1,81 +1,73 @@
 <?php
-/* @var $this Aoe_AsyncCache_Block_Adminhtml_AsyncControl */
-$_asyncCollection = $this->getAsyncCollection(); /* @var $_asyncCollection Aoe_AsyncCache_Model_Mysql4_Asynccache_Collection */
+/** @var $this Aoe_AsyncCache_Block_Adminhtml_AsyncControl */
+/** @var $_asyncCollection Aoe_AsyncCache_Model_Resource_Asynccache_Collection */
+$_asyncCollection = $this->getAsyncCollection();
 ?>
-
 <br/>
 <div class="content-header">
-	<table cellspacing="0">
-		<tr>
-			<td><h3><?php echo Mage::helper('adminhtml')->__('Asynchronous Cache Management') ?></h3></td>
-			<td class="form-buttons">
-				<button onclick="setLocation('<?php echo $this->getUrl('*/async/flushAllNow')?>')" type="button" class="scalable delete">
-					<span><?php echo Mage::helper('adminhtml')->__('Flush Cache Storage! Now!') ?></span>
-				</button>
-				<?php if (count($_asyncCollection) > 0): ?>
-					<button onclick="setLocation('<?php echo $this->getUrl('*/async/process')?>')" type="button" class="scalable delete">
-						<span><?php echo Mage::helper('adminhtml')->__('Process asynchronous queue') ?></span>
-					</button>
-				<?php endif; ?>
-			</td>
-		</tr>
-	</table>
+    <table cellspacing="0">
+        <tr>
+            <td><h3><?php echo Mage::helper('aoeasynccache')->__('Asynchronous Cache Management') ?></h3></td>
+            <td class="form-buttons">
+                <button onclick="setLocation('<?php echo $this->getUrl('*/async/flushAllNow')?>')" type="button" class="scalable delete">
+                    <span><?php echo Mage::helper('aoeasynccache')->__('Flush Cache Storage! Now!') ?></span>
+                </button>
+                <?php if (count($_asyncCollection) > 0): ?>
+                    <button onclick="setLocation('<?php echo $this->getUrl('*/async/process')?>')" type="button" class="scalable delete">
+                        <span><?php echo Mage::helper('aoeasynccache')->__('Process asynchronous queue') ?></span>
+                    </button>
+                <?php endif; ?>
+            </td>
+        </tr>
+    </table>
 </div>
 
 <?php if (count($_asyncCollection) > 0): ?>
+    <h4><?php echo Mage::helper('aoeasynccache')->__('Summary') ?>:</h4>
+    <div class="grid">
+        <table class="data" cellspacing="0">
+            <thead>
+                <tr class="headings">
+                    <th class=" no-link"><span class="nobr">Mode</span></th>
+                    <th class=" no-link last"><span class="nobr">Tags</span></th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php $i = 0;?>
+            <?php foreach ($_asyncCollection->extractJobs() as $job): ?>
+                <tr <?php echo ($i++ % 2) ? '' : 'class="even"'; ?>>
+                    <td><?php echo $job['mode']; ?></td>
+                    <td class="a-left last"><?php echo implode('<br />', $job['tags']); ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
-	<h4><?php echo Mage::helper('adminhtml')->__('Summary') ?>:</h4>
-	<div class="grid">
-		<table class="data" cellspacing="0">
-			<thead>
-				<tr class="headings">
-					<th class=" no-link"><span class="nobr">Mode</span></th>
-					<th class=" no-link last"><span class="nobr">Tags</span></th>
-				</tr>
-			</thead>
-			<tbody>
-			<?php $i = 0;?>
-			<?php foreach ($_asyncCollection->extractJobs() as $job): ?>
-				<tr <?php echo ($i++ % 2) ? '' : 'class="even"'; ?>>
-					<td><?php echo $job['mode']; ?></td>
-					<td class="a-left last"><?php echo implode('<br />', $job['tags']); ?></td>
-				</tr>
-			<?php endforeach; ?>
-			</tbody>
-		</table>
-	</div>
-
-	<h4><?php echo Mage::helper('adminhtml')->__('Single records') ?>:</h4>
-	<div class="grid">
-		<table class="data" cellspacing="0">
-			<thead>
-				<tr class="headings">
-					<th class="no-link"><span class="nobr"><?php echo Mage::helper('adminhtml')->__('Time') ?></span></th>
-					<th class="no-link"><span class="nobr"><?php echo Mage::helper('adminhtml')->__('Mode') ?></span></th>
-					<th class="no-link"><span class="nobr"><?php echo Mage::helper('adminhtml')->__('Tags') ?></span></th>
-					<?php /* if (Mage::getStoreConfig('system/aoeasynccache/enabletrace') == 1): ?>
-						<th class="no-link"><span class="nobr"><?php echo Mage::helper('adminhtml')->__('Trace') ?></span></th>
-					<?php endif; */ ?>
-					<th class="no-link last"><span class="nobr"><?php echo Mage::helper('adminhtml')->__('Action') ?></span></th>
-				</tr>
-			</thead>
-			<tbody>
-			<?php $i = 0;?>
-			<?php foreach ($_asyncCollection as $async): /* @var $async Aoe_AsyncCache_Model_Asynccache */ ?>
-				<tr <?php echo ($i++ % 2) ? '' : 'class="even"'; ?>>
-					<td><?php echo date('H:i:s', Mage::getModel('core/date')->timestamp($async->getTstamp())); ?></td>
-					<td><?php echo $async->getMode(); ?></td>
-					<td class="a-left"><?php echo $async->getTags(); ?></td>
-					<?php /* if (Mage::getStoreConfig('system/aoeasynccache/enabletrace') == 1): ?>
-						<td class="a-left"><pre><?php echo str_replace(' // ', "\n", $async->getTrace()); ?></pre></td>
-					<?php endif; */ ?>
-					<td class="a-left last"><a href="<?php echo $this->getUrl('*/async/delete', array('id' => $async->getId())); ?>"><?php echo Mage::helper('adminhtml')->__('Delete') ?></a></td>
-				</tr>
-			<?php endforeach; ?>
-			</tbody>
-		</table>
-	</div>
-
+    <h4><?php echo Mage::helper('aoeasynccache')->__('Single records') ?>:</h4>
+    <div class="grid">
+        <table class="data" cellspacing="0">
+            <thead>
+                <tr class="headings">
+                    <th class="no-link"><span class="nobr"><?php echo Mage::helper('aoeasynccache')->__('Time') ?></span></th>
+                    <th class="no-link"><span class="nobr"><?php echo Mage::helper('aoeasynccache')->__('Mode') ?></span></th>
+                    <th class="no-link"><span class="nobr"><?php echo Mage::helper('aoeasynccache')->__('Tags') ?></span></th>
+                    <th class="no-link last"><span class="nobr"><?php echo Mage::helper('aoeasynccache')->__('Action') ?></span></th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php $i = 0;?>
+            <?php foreach ($_asyncCollection as $async): /** @var $async Aoe_AsyncCache_Model_Asynccache */ ?>
+                <tr <?php echo ($i++ % 2) ? '' : 'class="even"'; ?>>
+                    <td><?php echo date('H:i:s', Mage::getModel('core/date')->timestamp($async->getTstamp())); ?></td>
+                    <td><?php echo $async->getMode(); ?></td>
+                    <td class="a-left"><?php echo $async->getTags(); ?></td>
+                    <td class="a-left last"><a href="<?php echo $this->getUrl('*/async/delete', array('id' => $async->getId())); ?>"><?php echo Mage::helper('aoeasynccache')->__('Delete') ?></a></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 <?php else: ?>
-	<?php echo Mage::helper('adminhtml')->__('No pending queue entries available.') ?>
+    <?php echo Mage::helper('aoeasynccache')->__('No pending queue entries available.') ?>
 <?php endif; ?>
