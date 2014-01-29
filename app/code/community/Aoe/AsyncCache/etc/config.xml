@@ -64,6 +64,15 @@
                     </aoeasynccache>
                 </observers>
             </aoe_tools_clearcache_cli>
+
+            <phpunit_suite_start_after>
+                <observers>
+                    <aoeasynccache>
+                        <class>Aoe_AsyncCache_PHPUnitTest_Observer</class>
+                        <method>disableAsyncCache</method>
+                    </aoeasynccache>
+                </observers>
+            </phpunit_suite_start_after>
         </events>
     </global>
 
