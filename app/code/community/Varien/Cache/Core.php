@@ -36,12 +36,20 @@ class Varien_Cache_Core extends Zend_Cache_Core
      */
     protected $asyncCacheType = 'cache';
 
+    /**
+     * @var bool whether to use asynccache only in admin.
+     */
+    protected $asyncCacheAdminOnly = false;
+
     public function __construct($options = array())
     {
         parent::__construct($options);
 
         if (isset($options['async_cache_type'])) {
             $this->asyncCacheType = $options['async_cache_type'];
+        }
+        if (isset($options['async_cache_admin_only'])) {
+            $this->asyncCacheAdminOnly = !empty($options['async_cache_admin_only']);
         }
     }
 
@@ -140,7 +148,17 @@ class Varien_Cache_Core extends Zend_Cache_Core
             return true;
         }
 
-        if (!$doIt && !Mage::registry('disableasynccache')) {
+        $useQueue = !$doIt && !Mage::registry('disableasynccache');
+        if ($useQueue && $this->asyncCacheAdminOnly) {
+            $action = Mage::app()->getFrontController()->getAction();
+            if (!$action || !($action instanceof Mage_Adminhtml_Controller_Action)) {
+                // We're not in the admin; this could be an add to cart
+                // or other frontend action.  We may want this to be immediate.
+                $useQueue = false;
+            }
+        }
+
+        if ($useQueue) {
             /** @var $asyncCache Aoe_AsyncCache_Model_Asynccache */
             $asyncCache = Mage::getModel('aoeasynccache/asynccache');
 
