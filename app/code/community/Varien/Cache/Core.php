@@ -32,6 +32,20 @@ class Varien_Cache_Core extends Zend_Cache_Core
     protected $defaultPriority = 8;
 
     /**
+     * @var string type for asynccache queue.
+     */
+    protected $asyncCacheType = 'cache';
+
+    public function __construct($options = array())
+    {
+        parent::__construct($options);
+
+        if (isset($options['async_cache_type'])) {
+            $this->asyncCacheType = $options['async_cache_type'];
+        }
+    }
+
+    /**
      * Set default priority
      *
      * @param int $defaultPriority
@@ -129,10 +143,12 @@ class Varien_Cache_Core extends Zend_Cache_Core
         if (!$doIt && !Mage::registry('disableasynccache')) {
             /** @var $asyncCache Aoe_AsyncCache_Model_Asynccache */
             $asyncCache = Mage::getModel('aoeasynccache/asynccache');
+
             if ($asyncCache !== false) {
                 $asyncCache->setTstamp(time())
                     ->setMode($mode)
                     ->setTags(is_array($tags) ? implode(',', $tags) : $tags)
+                    ->setCacheType($this->asyncCacheType)
                     ->setStatus(Aoe_AsyncCache_Model_Asynccache::STATUS_PENDING);
 
                 try {
