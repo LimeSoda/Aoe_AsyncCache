@@ -32,11 +32,6 @@ class Varien_Cache_Core extends Zend_Cache_Core
     protected $defaultPriority = 8;
 
     /**
-     * @var string type for asynccache queue.
-     */
-    protected $asyncCacheType = 'cache';
-
-    /**
      * @var bool whether to use asynccache only in admin.
      */
     protected $asyncCacheAdminOnly = false;
@@ -45,9 +40,6 @@ class Varien_Cache_Core extends Zend_Cache_Core
     {
         parent::__construct($options);
 
-        if (isset($options['async_cache_type'])) {
-            $this->asyncCacheType = $options['async_cache_type'];
-        }
         if (isset($options['async_cache_admin_only'])) {
             $this->asyncCacheAdminOnly = !empty($options['async_cache_admin_only']);
         }
@@ -158,6 +150,15 @@ class Varien_Cache_Core extends Zend_Cache_Core
             }
         }
 
+        $cacheType = null;
+        if ($useQueue) {
+            $cacheType = Mage::helper('aoeasynccache')->detectCacheType($this);
+            if (!$cacheType) {
+                // Uh oh, a custom cache perhaps?  Let's not queue.
+                $useQueue = false;
+            }
+        }
+
         if ($useQueue) {
             /** @var $asyncCache Aoe_AsyncCache_Model_Asynccache */
             $asyncCache = Mage::getModel('aoeasynccache/asynccache');
@@ -166,7 +167,7 @@ class Varien_Cache_Core extends Zend_Cache_Core
                 $asyncCache->setTstamp(time())
                     ->setMode($mode)
                     ->setTags(is_array($tags) ? implode(',', $tags) : $tags)
-                    ->setCacheType($this->asyncCacheType)
+                    ->setCacheType($cacheType)
                     ->setStatus(Aoe_AsyncCache_Model_Asynccache::STATUS_PENDING);
 
                 try {

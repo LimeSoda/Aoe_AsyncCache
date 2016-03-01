@@ -32,4 +32,19 @@ class Aoe_AsyncCache_Helper_Data extends Mage_Core_Helper_Abstract
 
         return implode(' // ', $path);
     }
+
+    public function detectCacheType($frontend)
+    {
+        if (Mage::app()->getCache() === $frontend) {
+            return 'config';
+        } else if (Mage::helper('core')->isModuleEnabled('Enterprise_PageCache')) {
+            // Let's check only if full page cache is enabled.
+            $fullPage = Enterprise_PageCache_Model_Cache::getCacheInstance()->getFrontend();
+            if ($fullPage === $frontend) {
+                return 'full_page_cache';
+            }
+        }
+
+        return null;
+    }
 }
