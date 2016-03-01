@@ -22,6 +22,22 @@ class Aoe_AsyncCache_Model_JobCollection extends Varien_Data_Collection
     }
 
     /**
+     * Remove items from the collection by cacheType.
+     *
+     * @param string $cacheType which type to remove.
+     * @return Aoe_AsyncCache_Model_JobCollection
+     */
+    public function clearByType($cacheType)
+    {
+        foreach ($this->getItems() as $key => $job) {
+            if ($job->getCacheType() == $cacheType) {
+                $this->removeItemByKey($key);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Summary for Aoe_Scheduler output
      *
      * @return string

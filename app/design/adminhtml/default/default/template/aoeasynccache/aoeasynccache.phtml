@@ -28,14 +28,16 @@ $_asyncCollection = $this->getAsyncCollection();
         <table class="data" cellspacing="0">
             <thead>
                 <tr class="headings">
-                    <th class=" no-link"><span class="nobr">Mode</span></th>
-                    <th class=" no-link last"><span class="nobr">Tags</span></th>
+                    <th class=" no-link"><span class="nobr"><?php echo Mage::helper('aoeasynccache')->__('Type'); ?></span></th>
+                    <th class=" no-link"><span class="nobr"><?php echo Mage::helper('aoeasynccache')->__('Mode'); ?></span></th>
+                    <th class=" no-link last"><span class="nobr"><?php echo Mage::helper('aoeasynccache')->__('Tags'); ?></span></th>
                 </tr>
             </thead>
             <tbody>
             <?php $i = 0;?>
             <?php foreach ($_asyncCollection->extractJobs() as $job): ?>
                 <tr <?php echo ($i++ % 2) ? '' : 'class="even"'; ?>>
+                    <td><?php echo $job['cache_type']; ?></td>
                     <td><?php echo $job['mode']; ?></td>
                     <td class="a-left last"><?php echo implode('<br />', $job['tags']); ?></td>
                 </tr>
@@ -50,6 +52,7 @@ $_asyncCollection = $this->getAsyncCollection();
             <thead>
                 <tr class="headings">
                     <th class="no-link"><span class="nobr"><?php echo Mage::helper('aoeasynccache')->__('Time') ?></span></th>
+                    <th class="no-link"><span class="nobr"><?php echo Mage::helper('aoeasynccache')->__('Type'); ?></span></th>
                     <th class="no-link"><span class="nobr"><?php echo Mage::helper('aoeasynccache')->__('Mode') ?></span></th>
                     <th class="no-link"><span class="nobr"><?php echo Mage::helper('aoeasynccache')->__('Tags') ?></span></th>
                     <th class="no-link last"><span class="nobr"><?php echo Mage::helper('aoeasynccache')->__('Action') ?></span></th>
@@ -60,6 +63,7 @@ $_asyncCollection = $this->getAsyncCollection();
             <?php foreach ($_asyncCollection as $async): /** @var $async Aoe_AsyncCache_Model_Asynccache */ ?>
                 <tr <?php echo ($i++ % 2) ? '' : 'class="even"'; ?>>
                     <td><?php echo date('H:i:s', Mage::getModel('core/date')->timestamp($async->getTstamp())); ?></td>
+                    <td><?php echo $async->getCacheType(); ?></td>
                     <td><?php echo $async->getMode(); ?></td>
                     <td class="a-left"><?php echo $async->getTags(); ?></td>
                     <td class="a-left last"><a href="<?php echo $this->getUrl('*/async/delete', array('id' => $async->getId())); ?>"><?php echo Mage::helper('aoeasynccache')->__('Delete') ?></a></td>

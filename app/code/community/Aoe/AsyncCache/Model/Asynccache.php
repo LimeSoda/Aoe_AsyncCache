@@ -19,6 +19,8 @@
  * @method Aoe_AsyncCache_Model_Asynccache setStatus(string $status)
  * @method string getProcessed()
  * @method Aoe_AsyncCache_Model_Asynccache setProcessed(string $message)
+ * @method string getCacheType()
+ * @method Aoe_AsyncCacheModel_Asynccache setCacheType(string $type)
  */
 class Aoe_AsyncCache_Model_Asynccache extends Mage_Core_Model_Abstract
 {

@@ -45,7 +45,8 @@ class Aoe_AsyncCache_Model_Cleaner extends Mage_Core_Model_Abstract
                     $mode = $job->getMode();
                     if (in_array($mode, $this->_supportedJobModes)) {
                         $startTime = time();
-                        Mage::app()->getCache()->clean($job->getMode(), $job->getTags(), true);
+                        $cache = $this->getCacheByType($job->getCacheType());
+                        $cache->clean($job->getMode(), $job->getTags(), true);
                         $job->setDuration(time() - $startTime);
                         $job->setIsProcessed(true);
 
@@ -88,6 +89,20 @@ class Aoe_AsyncCache_Model_Cleaner extends Mage_Core_Model_Abstract
         Mage::register('disableasynccache', true, true);
 
         return $summary;
+    }
+
+    /**
+     * Retrieve the cache frontend for the specified cache type.
+     *
+     * @param string $cacheType Such as 'cache' or 'full_page_cache'.
+     * @return Varien_Cache_Core
+     */
+    protected function getCacheByType($cacheType)
+    {
+        if ($cacheType === 'full_page_cache') {
+            return Enterprise_PageCache_Model_Cache::getCacheInstance()->getFrontend();
+        }
+        return Mage::app()->getCache();
     }
 
     /**

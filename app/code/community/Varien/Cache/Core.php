@@ -32,6 +32,20 @@ class Varien_Cache_Core extends Zend_Cache_Core
     protected $defaultPriority = 8;
 
     /**
+     * @var bool whether to use asynccache only in admin.
+     */
+    protected $asyncCacheAdminOnly = false;
+
+    public function __construct($options = array())
+    {
+        parent::__construct($options);
+
+        if (isset($options['async_cache_admin_only'])) {
+            $this->asyncCacheAdminOnly = !empty($options['async_cache_admin_only']);
+        }
+    }
+
+    /**
      * Set default priority
      *
      * @param int $defaultPriority
@@ -126,13 +140,34 @@ class Varien_Cache_Core extends Zend_Cache_Core
             return true;
         }
 
-        if (!$doIt && !Mage::registry('disableasynccache')) {
+        $useQueue = !$doIt && !Mage::registry('disableasynccache');
+        if ($useQueue && $this->asyncCacheAdminOnly) {
+            $action = Mage::app()->getFrontController()->getAction();
+            if (!$action || !($action instanceof Mage_Adminhtml_Controller_Action)) {
+                // We're not in the admin; this could be an add to cart
+                // or other frontend action.  We may want this to be immediate.
+                $useQueue = false;
+            }
+        }
+
+        $cacheType = null;
+        if ($useQueue) {
+            $cacheType = Mage::helper('aoeasynccache')->detectCacheType($this);
+            if (!$cacheType) {
+                // Uh oh, a custom cache perhaps?  Let's not queue.
+                $useQueue = false;
+            }
+        }
+
+        if ($useQueue) {
             /** @var $asyncCache Aoe_AsyncCache_Model_Asynccache */
             $asyncCache = Mage::getModel('aoeasynccache/asynccache');
+
             if ($asyncCache !== false) {
                 $asyncCache->setTstamp(time())
                     ->setMode($mode)
                     ->setTags(is_array($tags) ? implode(',', $tags) : $tags)
+                    ->setCacheType($cacheType)
                     ->setStatus(Aoe_AsyncCache_Model_Asynccache::STATUS_PENDING);
 
                 try {
