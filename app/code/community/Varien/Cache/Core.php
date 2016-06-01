@@ -150,6 +150,12 @@ class Varien_Cache_Core extends Zend_Cache_Core
             }
         }
 
+        // Aoe_AsyncCache may not yet be loaded in early setup/phpunit stages.
+        $moduleExists = Mage::getConfig()->getNode('modules/Aoe_AsyncCache');
+        if (!$moduleExists) {
+            $useQueue = false;
+        }
+
         $cacheType = null;
         if ($useQueue) {
             $cacheType = Mage::helper('aoeasynccache')->detectCacheType($this);
