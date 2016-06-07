@@ -5,6 +5,7 @@
  *
  * @author Fabrizio Branca
  */
+
 class Aoe_AsyncCache_Model_Cleaner extends Mage_Core_Model_Abstract
 {
     /**
@@ -50,11 +51,13 @@ class Aoe_AsyncCache_Model_Cleaner extends Mage_Core_Model_Abstract
                         $job->setDuration(time() - $startTime);
                         $job->setIsProcessed(true);
 
-                        Mage::log(sprintf('[ASYNCCACHE] MODE: %s, DURATION: %s sec, TAGS: %s',
-                            $job->getMode(),
-                            $job->getDuration(),
-                            implode(', ', $job->getTags())
-                        ));
+                        if (Mage::getStoreConfigFlag('dev/log/aoeAsyncCacheActive')) {
+                            Mage::log(sprintf('[ASYNCCACHE] MODE: %s, DURATION: %s sec, TAGS: %s',
+                                $job->getMode(),
+                                $job->getDuration(),
+                                implode(', ', $job->getTags())
+                            ));
+                        }
                     }
                 }
             }
@@ -67,7 +70,10 @@ class Aoe_AsyncCache_Model_Cleaner extends Mage_Core_Model_Abstract
             // check what jobs weren't processed by any code
             /** @var $job Aoe_AsyncCache_Model_Job */
             foreach ($jobCollection as $job) {
-                if (!$job->getIsProcessed()) {
+                if (
+                    !$job->getIsProcessed()
+                    && Mage::getStoreConfigFlag('dev/log/aoeAsyncCacheActive')
+                ) {
                     Mage::log(sprintf("[ASYNCCACHE] Couldn't process job: MODE: %s, TAGS: %s",
                         $job->getMode(),
                         implode(', ', $job->getTags())
@@ -91,19 +97,7 @@ class Aoe_AsyncCache_Model_Cleaner extends Mage_Core_Model_Abstract
         return $summary;
     }
 
-    /**
-     * Retrieve the cache frontend for the specified cache type.
-     *
-     * @param string $cacheType Such as 'cache' or 'full_page_cache'.
-     * @return Varien_Cache_Core
-     */
-    protected function getCacheByType($cacheType)
-    {
-        if ($cacheType === 'full_page_cache') {
-            return Enterprise_PageCache_Model_Cache::getCacheInstance()->getFrontend();
-        }
-        return Mage::app()->getCache();
-    }
+
 
     /**
      * Get all unprocessed entries
@@ -126,5 +120,20 @@ class Aoe_AsyncCache_Model_Cleaner extends Mage_Core_Model_Abstract
         }
 
         return $collection;
+    }
+
+
+    /**
+     * Retrieve the cache frontend for the specified cache type.
+     *
+     * @param string $cacheType Such as 'cache' or 'full_page_cache'.
+     * @return Varien_Cache_Core
+     */
+    protected function getCacheByType($cacheType)
+    {
+        if ($cacheType === 'full_page_cache') {
+            return Enterprise_PageCache_Model_Cache::getCacheInstance()->getFrontend();
+        }
+        return Mage::app()->getCache();
     }
 }
