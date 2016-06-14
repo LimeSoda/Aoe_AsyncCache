@@ -5,7 +5,6 @@
  *
  * @author Fabrizio Branca
  */
-
 class Aoe_AsyncCache_Model_Cleaner extends Mage_Core_Model_Abstract
 {
     /**
